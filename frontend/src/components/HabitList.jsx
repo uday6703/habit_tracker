@@ -178,7 +178,16 @@ const HabitList = () => {
           </div>
         ) : (
           habits.map(habit => (
-            <div key={habit._id} className="habit-card">
+            <div key={habit._id} className="habit-card" style={{ position: 'relative' }}>
+              <button
+                className="delete-icon-btn"
+                onClick={() => handleDeleteHabit(habit._id)}
+                disabled={deleting === habit._id}
+                title="Delete habit"
+                style={{ position: 'absolute', top: '1rem', right: '1rem' }}
+              >
+                🗑️
+              </button>
               <h3>{habit.title}</h3>
               <p>📂 <strong>Category:</strong> {habit.category}</p>
               <p>📅 <strong>Frequency:</strong> {habit.frequency}</p>
@@ -188,13 +197,6 @@ const HabitList = () => {
               </p>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                 <Link to={`/habits/${habit._id}`} style={{ flex: 1 }}>View Details →</Link>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDeleteHabit(habit._id)}
-                  disabled={deleting === habit._id}
-                >
-                  {deleting === habit._id ? '⏳ Deleting...' : '🗑️ Delete'}
-                </button>
               </div>
             </div>
           ))

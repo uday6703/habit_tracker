@@ -81,7 +81,16 @@ const HabitDetail = () => {
   if (!habit) return <div className="loading">❌ Habit not found</div>;
 
   return (
-    <div className="habit-detail">
+    <div className="habit-detail" style={{ position: 'relative' }}>
+      <button
+        className="delete-icon-btn"
+        onClick={handleDeleteHabit}
+        disabled={deleting}
+        title="Delete habit"
+        style={{ position: 'absolute', top: '0', right: '0' }}
+      >
+        🗑️
+      </button>
       <button 
         onClick={() => navigate('/habits')}
         style={{
@@ -146,16 +155,6 @@ const HabitDetail = () => {
       >
         {checkingIn ? '⏳ Checking in...' : '✅ Check In Today'}
       </button>
-
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-        <button
-          className="delete-button"
-          onClick={handleDeleteHabit}
-          disabled={deleting}
-        >
-          {deleting ? '⏳ Deleting...' : '🗑️ Delete Habit'}
-        </button>
-      </div>
 
       <h3 style={{ marginTop: '2.5rem', marginBottom: '1.5rem', fontSize: '1.3rem', color: '#333' }}>📊 History</h3>
       
