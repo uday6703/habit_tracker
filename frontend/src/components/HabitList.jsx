@@ -192,7 +192,7 @@ const HabitList = () => {
                   onClick={() => handleDeleteHabit(habit._id)}
                   disabled={deleting === habit._id}
                   style={{
-                    background: '#ff6b6b',
+                    background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
                     color: '#fff',
                     border: 'none',
                     padding: '0.6rem 1.2rem',
@@ -201,9 +201,13 @@ const HabitList = () => {
                     fontWeight: '600',
                     fontSize: '0.95rem',
                     transition: 'all 0.3s ease',
-                    opacity: deleting === habit._id ? 0.7 : 1,
-                    whiteSpace: 'nowrap'
+                    opacity: deleting === habit._id ? 0.6 : 1,
+                    whiteSpace: 'nowrap',
+                    boxShadow: deleting === habit._id ? 'none' : '0 3px 12px rgba(255, 107, 107, 0.35)',
+                    letterSpacing: '0.5px'
                   }}
+                  onMouseEnter={(e) => !deleting && (e.target.style.boxShadow = '0 5px 16px rgba(255, 107, 107, 0.5)')}
+                  onMouseLeave={(e) => !deleting && (e.target.style.boxShadow = '0 3px 12px rgba(255, 107, 107, 0.35)')}
                 >
                   {deleting === habit._id ? '⏳ Deleting...' : '🗑️ Delete'}
                 </button>

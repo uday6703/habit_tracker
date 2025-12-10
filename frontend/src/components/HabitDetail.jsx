@@ -154,7 +154,7 @@ const HabitDetail = () => {
           background: '#ff6b6b',
           color: '#fff',
           border: 'none',
-          padding: '0.9rem 1.8rem',
+          padding: '0.5rem 1.2rem',
           borderRadius: '10px',
           cursor: deleting ? 'not-allowed' : 'pointer',
           fontWeight: '700',
