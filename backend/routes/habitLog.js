@@ -7,7 +7,7 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/checkin', protect, [
-  body('habitId').notEmpty()
+  body('habitId').isMongoId().withMessage('Invalid habit ID')
 ], validate, checkIn);
 
 router.get('/:habitId', protect, getLogs);

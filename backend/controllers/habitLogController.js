@@ -35,7 +35,15 @@ exports.checkIn = async (req, res) => {
     const { habitId } = req.body;
     const userId = req.user._id;
     
-    // Get today's date range (00:00 to 23:59)
+    console.log('CheckIn Request:', { habitId, userId });
+    
+    // Validate habit exists and belongs to user
+    const habit = await Habit.findOne({ _id: habitId, user: userId });
+    if (!habit) {
+      return res.status(404).json({ message: 'Habit not found' });
+    }
+    
+    // Get today's date range (00:00 to 23:59 UTC)
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     
@@ -51,6 +59,7 @@ exports.checkIn = async (req, res) => {
     });
     
     if (existingLog) {
+      console.log('Already checked in today:', existingLog._id);
       return res.status(400).json({ message: 'Already checked in today!' });
     }
     
@@ -65,23 +74,28 @@ exports.checkIn = async (req, res) => {
       { upsert: true, new: true }
     );
     
+    console.log('CheckIn Log Created:', log._id);
+    
     // Calculate new streak
     const streak = await calculateStreak(habitId, userId);
+    console.log('Calculated Streak:', streak);
     
     // Update habit with new streak
-    const habit = await Habit.findByIdAndUpdate(
+    const updatedHabit = await Habit.findByIdAndUpdate(
       habitId,
       {
         streak: streak,
-        longestStreak: Math.max(streak, habit?.longestStreak || 0)
+        longestStreak: Math.max(streak, habit.longestStreak || 0)
       },
       { new: true }
     );
     
+    console.log('Habit Updated:', { streak: updatedHabit.streak, longestStreak: updatedHabit.longestStreak });
+    
     res.json({ 
       log, 
-      streak: habit.streak, 
-      longestStreak: habit.longestStreak,
+      streak: updatedHabit.streak, 
+      longestStreak: updatedHabit.longestStreak,
       message: 'Checked in successfully!' 
     });
   } catch (err) {
@@ -92,10 +106,11 @@ exports.checkIn = async (req, res) => {
 
 exports.getLogs = async (req, res) => {
   try {
-    const logs = await HabitLog.find({ user: req.user._id, habit: req.params.habitId });
+    const logs = await HabitLog.find({ user: req.user._id, habit: req.params.habitId })
+      .sort({ date: -1 });
     res.json(logs);
   } catch (err) {
-    console.error(err);
+    console.error('GetLogs Error:', err);
     res.status(500).json({ message: 'Error fetching logs' });
   }
 };
