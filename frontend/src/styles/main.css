@@ -499,6 +499,39 @@ main {
   }
 }
 
+/* ============= DELETE BUTTON STYLES ============= */
+.delete-button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.delete-button:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+  transform: translateY(-2px);
+}
+
+.delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.delete-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 @media (max-width: 480px) {
   .navbar {
     flex-direction: column;

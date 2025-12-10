@@ -147,26 +147,15 @@ const HabitDetail = () => {
         {checkingIn ? '⏳ Checking in...' : '✅ Check In Today'}
       </button>
 
-      <button
-        onClick={handleDeleteHabit}
-        disabled={deleting}
-        style={{
-          background: '#ff6b6b',
-          color: '#fff',
-          border: 'none',
-          padding: '0.5rem 1.2rem',
-          borderRadius: '10px',
-          cursor: deleting ? 'not-allowed' : 'pointer',
-          fontWeight: '700',
-          fontSize: '1rem',
-          width: '100%',
-          marginBottom: '2rem',
-          transition: 'all 0.3s ease',
-          opacity: deleting ? 0.7 : 1
-        }}
-      >
-        {deleting ? '⏳ Deleting...' : '🗑️ Delete Habit'}
-      </button>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+        <button
+          className="delete-button"
+          onClick={handleDeleteHabit}
+          disabled={deleting}
+        >
+          {deleting ? '⏳ Deleting...' : '🗑️ Delete Habit'}
+        </button>
+      </div>
 
       <h3 style={{ marginTop: '2.5rem', marginBottom: '1.5rem', fontSize: '1.3rem', color: '#333' }}>📊 History</h3>
       
