@@ -13,15 +13,10 @@ const HabitDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const habitRes = await api.get(`/habits/${id}`, { 
-          headers: { Authorization: `Bearer ${token}` } 
-        });
+        const habitRes = await api.get(`/habits/${id}`);
         setHabit(habitRes.data);
 
-        const logsRes = await api.get(`/habitlogs/${id}`, { 
-          headers: { Authorization: `Bearer ${token}` } 
-        });
+        const logsRes = await api.get(`/habitlogs/${id}`);
         setLogs(logsRes.data);
       } catch (err) {
         console.error(err);
@@ -35,15 +30,29 @@ const HabitDetail = () => {
   const handleCheckIn = async () => {
     try {
       setCheckingIn(true);
-      const today = new Date().toISOString().split('T')[0];
-      await api.post('/habitlogs/checkin', 
-        { habitId: id, date: new Date().toISOString() },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      const response = await api.post('/habitlogs/checkin', 
+        { habitId: id }
       );
+      
+      // Update habit with new streak
+      setHabit(prev => ({
+        ...prev,
+        streak: response.data.streak,
+        longestStreak: response.data.longestStreak
+      }));
+      
       // Refresh logs
-      window.location.reload();
+      const logsRes = await api.get(`/habitlogs/${id}`);
+      setLogs(logsRes.data);
+      
+      alert('✅ Checked in successfully! Streak: ' + response.data.streak + ' days');
     } catch (err) {
-      console.error(err);
+      if (err.response?.status === 400) {
+        alert('⚠️ ' + err.response.data.message);
+      } else {
+        alert('❌ Error checking in. Please try again.');
+        console.error(err);
+      }
     } finally {
       setCheckingIn(false);
     }
