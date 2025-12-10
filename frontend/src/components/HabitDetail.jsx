@@ -9,6 +9,7 @@ const HabitDetail = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkingIn, setCheckingIn] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +56,24 @@ const HabitDetail = () => {
       }
     } finally {
       setCheckingIn(false);
+    }
+  };
+
+  const handleDeleteHabit = async () => {
+    if (!window.confirm(`Are you sure you want to delete "${habit.title}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      await api.delete(`/habits/${id}`);
+      alert('✅ Habit deleted successfully');
+      navigate('/habits');
+    } catch (err) {
+      console.error(err);
+      alert('❌ Error deleting habit');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -126,6 +145,27 @@ const HabitDetail = () => {
         }}
       >
         {checkingIn ? '⏳ Checking in...' : '✅ Check In Today'}
+      </button>
+
+      <button
+        onClick={handleDeleteHabit}
+        disabled={deleting}
+        style={{
+          background: '#ff6b6b',
+          color: '#fff',
+          border: 'none',
+          padding: '0.9rem 1.8rem',
+          borderRadius: '10px',
+          cursor: deleting ? 'not-allowed' : 'pointer',
+          fontWeight: '700',
+          fontSize: '1rem',
+          width: '100%',
+          marginBottom: '2rem',
+          transition: 'all 0.3s ease',
+          opacity: deleting ? 0.7 : 1
+        }}
+      >
+        {deleting ? '⏳ Deleting...' : '🗑️ Delete Habit'}
       </button>
 
       <h3 style={{ marginTop: '2.5rem', marginBottom: '1.5rem', fontSize: '1.3rem', color: '#333' }}>📊 History</h3>

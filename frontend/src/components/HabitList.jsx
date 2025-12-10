@@ -8,6 +8,7 @@ const HabitList = () => {
   const [newHabit, setNewHabit] = useState({ title: '', category: 'Health', frequency: 'daily', priority: 'medium' });
   const [showForm, setShowForm] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState(null);
 
   const handleCreateHabit = async (e) => {
     e.preventDefault();
@@ -15,16 +16,33 @@ const HabitList = () => {
     
     try {
       setCreating(true);
-      const res = await api.post('/habits', newHabit, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.post('/habits', newHabit);
       setHabits([...habits, res.data]);
       setNewHabit({ title: '', category: 'Health', frequency: 'daily', priority: 'medium' });
       setShowForm(false);
     } catch (err) {
       console.error(err);
+      alert('❌ Error creating habit');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDeleteHabit = async (habitId) => {
+    if (!window.confirm('Are you sure you want to delete this habit? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setDeleting(habitId);
+      await api.delete(`/habits/${habitId}`);
+      setHabits(habits.filter(h => h._id !== habitId));
+      alert('✅ Habit deleted successfully');
+    } catch (err) {
+      console.error(err);
+      alert('❌ Error deleting habit');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -168,7 +186,28 @@ const HabitList = () => {
               <p style={{ fontSize: '1.2rem', fontWeight: '700', color: '#f5576c', marginTop: '1rem' }}>
                 🔥 Streak: {habit.streak} days
               </p>
-              <Link to={`/habits/${habit._id}`}>View Details →</Link>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                <Link to={`/habits/${habit._id}`} style={{ flex: 1 }}>View Details →</Link>
+                <button
+                  onClick={() => handleDeleteHabit(habit._id)}
+                  disabled={deleting === habit._id}
+                  style={{
+                    background: '#ff6b6b',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '0.6rem 1.2rem',
+                    borderRadius: '8px',
+                    cursor: deleting === habit._id ? 'not-allowed' : 'pointer',
+                    fontWeight: '600',
+                    fontSize: '0.95rem',
+                    transition: 'all 0.3s ease',
+                    opacity: deleting === habit._id ? 0.7 : 1,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {deleting === habit._id ? '⏳ Deleting...' : '🗑️ Delete'}
+                </button>
+              </div>
             </div>
           ))
         )}
